@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Perf from 'react-addons-perf' // ES6
+//import Perf from 'react-addons-perf' // ES6
 class Cell extends React.Component {
     constructor(props) {
         super(props);
@@ -10,7 +10,7 @@ class Cell extends React.Component {
     }
 
     render() {
-        let className = ['life'];
+        let className = ['cell'];
         if (this.props.alive) {
             className.push('alive');
         }
@@ -21,11 +21,11 @@ class Cell extends React.Component {
     }
 }
 
-let lifeSize = 5;
-let w = 100;
-let h = 100;
-let chance = 0.75;
-let stopTime = 10;
+let cellSize = 2;
+let w = 200;
+let h = 200;
+let chance = 0.93;
+let stopTime = 5000;
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -35,11 +35,12 @@ class App extends React.Component {
         this.checkAlive = this.checkAlive.bind(this);
         this.tick = this.tick.bind(this);
         this.runTime = 1;
-
-
+		this.aliveCount=0;
+		this.deadCount=0;
+		this.cellsCount=0;
         //per_width = per_width < 5 ? 10 : per_width;
-        for (let i = 0; i < parseInt(h / lifeSize); i++) {
-            for (let j = 0; j < parseInt(w / lifeSize); j++) {
+        for (let i = 0; i < parseInt(h / cellSize); i++) {
+            for (let j = 0; j < parseInt(w / cellSize); j++) {
                 let neighborCells = [];
                 neighborCells.push((i - 1) + '_' + (j - 1));
                 neighborCells.push((i - 1) + '_' + (j + 1));
@@ -52,78 +53,87 @@ class App extends React.Component {
                 this.state[i + '_' + j] = {};
                 this.state[i + '_' + j]['alive'] = (Math.random() > chance);
                 this.state[i + '_' + j]['neighbor'] = neighborCells;
+				this.cellsCount++;
             }
         }
-         
+        //console.log(k);
 
 
 
     }
-    checkAlive(cellName) {
+    checkAlive(cells,cellName) {
 
         //console.log(neighborCells);
         let o = this.state[cellName];
         //console.log(i,j);
         let neighborCells = o['neighbor'];
 
-        let alivecount = 0;
+        let neighborAliveCount = 0;
         for (let cell in neighborCells) {
             //console.log(neighborCells[cell],this.state[neighborCells[cell]]);
             if (this.state[neighborCells[cell]]) {
                 if (this.state[neighborCells[cell]]['alive']) {
-                    alivecount++;
+                    neighborAliveCount++;
                 }
             }
         }
         //let alive = this.state[i + '_' + j]['alive'];
         //console.log(alive,alivecount);
         if (o['alive']) {
-            if (alivecount < 2 || alivecount > 3) {
+            if (neighborAliveCount < 2 || neighborAliveCount > 3) {
                 o['alive'] = false;
             }
         } else {
-            if (alivecount == 3) {
+            if (neighborAliveCount == 3) {
                 o['alive'] = true;
             }
         }
         //console.log(o);
-        let cells = {};
+        //let cells = {};
         cells[cellName] = {};
         cells[cellName]['alive'] = o['alive'];
         cells[cellName]['neighbor'] = o['neighbor'];
         
-        
+        return cells;  
         
        
-    
+    /*
     Perf.start();
      this.setState(cells);
     Perf.stop();
     Perf.printInclusive();
     Perf.printWasted();
-    }
+    */
+	}
 
 
     tick() {
         //console.log(this.runTime,stopTime);
         if (this.runTime >= stopTime) {
             clearInterval(this.timer);
-           
-             
         }
         
         //console.log(this.state);
+		let newState = {};
+		this.aliveCount=0;
+		this.deadCount=0;
         for (let cellName in this.state) {
-            this.checkAlive(cellName);
+			newState = this.checkAlive(newState,cellName);
+			if(this.state[cellName]['alive']){
+				this.aliveCount++;
+			}else{
+				this.deadCount++;
+			}
+            //this.checkAlive(cellName);
         }
-
+		this.setState(newState);
 		this.runTime++;
         //console.log(this.state);
         //this.setState({alive:alive});
     }
 
     componentDidMount() {
-        this.timer = setInterval(this.tick, 1000);
+        this.timer = setInterval(this.tick, 100);
       
     }
 
@@ -134,9 +144,16 @@ class App extends React.Component {
     render() {
     
         return (
-            <div id="show">
-            { Object.keys(this.state).map((k, index) => <Cell key={k} alive={this.state[k]['alive']}/>) }
-			
+			<div>
+				<div id="show">
+					{Object.keys(this.state).map((k, index) => <Cell key={k} alive={this.state[k]['alive']}/>) }
+				</div>
+				<div className="detail">
+					<div>细胞数:{this.cellsCount}</div>
+				    <div>剩余进化次数:{(stopTime-this.runTime)}</div>
+				    <div>存活细胞数量:{this.aliveCount}</div>
+				    <div>死亡细胞数量:{this.deadCount}</div>
+				</div>
 			</div>
         );
 
