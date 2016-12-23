@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Perf from 'react-addons-perf' // ES6
 class Cell extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,7 @@ let lifeSize = 5;
 let w = 100;
 let h = 100;
 let chance = 0.75;
-let stopTime = 999;
+let stopTime = 10;
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -53,6 +54,7 @@ class App extends React.Component {
                 this.state[i + '_' + j]['neighbor'] = neighborCells;
             }
         }
+         
 
 
 
@@ -89,7 +91,16 @@ class App extends React.Component {
         cells[cellName] = {};
         cells[cellName]['alive'] = o['alive'];
         cells[cellName]['neighbor'] = o['neighbor'];
-        this.setState(cells);
+        
+        
+        
+       
+    
+    Perf.start();
+     this.setState(cells);
+    Perf.stop();
+    Perf.printInclusive();
+    Perf.printWasted();
     }
 
 
@@ -97,6 +108,8 @@ class App extends React.Component {
         //console.log(this.runTime,stopTime);
         if (this.runTime >= stopTime) {
             clearInterval(this.timer);
+           
+             
         }
         
         //console.log(this.state);
@@ -111,6 +124,7 @@ class App extends React.Component {
 
     componentDidMount() {
         this.timer = setInterval(this.tick, 1000);
+      
     }
 
     componentWillUnmount() {
