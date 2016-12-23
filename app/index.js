@@ -35,9 +35,9 @@ class App extends React.Component {
         this.checkAlive = this.checkAlive.bind(this);
         this.tick = this.tick.bind(this);
         this.runTime = 1;
-		this.aliveCount=0;
-		this.deadCount=0;
-		this.cellsCount=0;
+        this.aliveCount = 0;
+        this.deadCount = 0;
+        this.cellsCount = 0;
         //per_width = per_width < 5 ? 10 : per_width;
         for (let i = 0; i < parseInt(h / cellSize); i++) {
             for (let j = 0; j < parseInt(w / cellSize); j++) {
@@ -53,7 +53,7 @@ class App extends React.Component {
                 this.state[i + '_' + j] = {};
                 this.state[i + '_' + j]['alive'] = (Math.random() > chance);
                 this.state[i + '_' + j]['neighbor'] = neighborCells;
-				this.cellsCount++;
+                this.cellsCount++;
             }
         }
         //console.log(k);
@@ -61,7 +61,7 @@ class App extends React.Component {
 
 
     }
-    checkAlive(cells,cellName) {
+    checkAlive(cells, cellName) {
 
         //console.log(neighborCells);
         let o = this.state[cellName];
@@ -93,18 +93,18 @@ class App extends React.Component {
         cells[cellName] = {};
         cells[cellName]['alive'] = o['alive'];
         cells[cellName]['neighbor'] = o['neighbor'];
-        
-        return cells;  
-        
-       
-    /*
-    Perf.start();
-     this.setState(cells);
-    Perf.stop();
-    Perf.printInclusive();
-    Perf.printWasted();
-    */
-	}
+
+        return cells;
+
+
+        /*
+        Perf.start();
+         this.setState(cells);
+        Perf.stop();
+        Perf.printInclusive();
+        Perf.printWasted();
+        */
+    }
 
 
     tick() {
@@ -112,29 +112,29 @@ class App extends React.Component {
         if (this.runTime >= stopTime) {
             clearInterval(this.timer);
         }
-        
+
         //console.log(this.state);
-		let newState = {};
-		this.aliveCount=0;
-		this.deadCount=0;
+        let newState = {};
+        this.aliveCount = 0;
+        this.deadCount = 0;
         for (let cellName in this.state) {
-			newState = this.checkAlive(newState,cellName);
-			if(this.state[cellName]['alive']){
-				this.aliveCount++;
-			}else{
-				this.deadCount++;
-			}
+            newState = this.checkAlive(newState, cellName);
+            if (this.state[cellName]['alive']) {
+                this.aliveCount++;
+            } else {
+                this.deadCount++;
+            }
             //this.checkAlive(cellName);
         }
-		this.setState(newState);
-		this.runTime++;
+        this.setState(newState);
+        this.runTime++;
         //console.log(this.state);
         //this.setState({alive:alive});
     }
 
     componentDidMount() {
         this.timer = setInterval(this.tick, 100);
-      
+
     }
 
     componentWillUnmount() {
@@ -142,9 +142,9 @@ class App extends React.Component {
     }
 
     render() {
-    
+
         return (
-			<div>
+            <div>
 				<div id="show">
 					{Object.keys(this.state).map((k, index) => <Cell key={k} alive={this.state[k]['alive']}/>) }
 				</div>
