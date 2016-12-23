@@ -24,12 +24,13 @@ class Cell extends React.Component {
 let cellSize = 2;
 let w = 200;
 let h = 200;
-let chance = 0.93;
+let chance = 0.5;
 let stopTime = 5000;
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
+		this.cellsNeighbor={};
         //this.cellsDiv=[];
         //console.log(store);
         this.checkAlive = this.checkAlive.bind(this);
@@ -50,10 +51,14 @@ class App extends React.Component {
                 neighborCells.push(i + '_' + (j + 1));
                 neighborCells.push((i + 1) + '_' + j);
                 neighborCells.push((i - 1) + '_' + j);
+				/*
                 this.state[i + '_' + j] = {};
                 this.state[i + '_' + j]['alive'] = (Math.random() > chance);
                 this.state[i + '_' + j]['neighbor'] = neighborCells;
-                this.cellsCount++;
+                */
+				this.state[i + '_' + j] = (Math.random() > chance);
+				this.cellsNeighbor[i + '_' + j] = neighborCells;
+				this.cellsCount++;
             }
         }
         //console.log(k);
@@ -64,35 +69,33 @@ class App extends React.Component {
     checkAlive(cells, cellName) {
 
         //console.log(neighborCells);
-        let o = this.state[cellName];
+        let alive = this.state[cellName];
         //console.log(i,j);
-        let neighborCells = o['neighbor'];
+        let neighborCells= this.cellsNeighbor[cellName];
 
         let neighborAliveCount = 0;
         for (let cell in neighborCells) {
             //console.log(neighborCells[cell],this.state[neighborCells[cell]]);
             if (this.state[neighborCells[cell]]) {
-                if (this.state[neighborCells[cell]]['alive']) {
+                if (this.state[neighborCells[cell]]) {
                     neighborAliveCount++;
                 }
             }
         }
         //let alive = this.state[i + '_' + j]['alive'];
         //console.log(alive,alivecount);
-        if (o['alive']) {
+        if (alive) {
             if (neighborAliveCount < 2 || neighborAliveCount > 3) {
-                o['alive'] = false;
+                alive = false;
             }
         } else {
             if (neighborAliveCount == 3) {
-                o['alive'] = true;
+                alive = true;
             }
         }
         //console.log(o);
         //let cells = {};
-        cells[cellName] = {};
-        cells[cellName]['alive'] = o['alive'];
-        cells[cellName]['neighbor'] = o['neighbor'];
+        cells[cellName] = alive;
 
         return cells;
 
@@ -119,7 +122,7 @@ class App extends React.Component {
         this.deadCount = 0;
         for (let cellName in this.state) {
             newState = this.checkAlive(newState, cellName);
-            if (this.state[cellName]['alive']) {
+            if (this.state[cellName]) {
                 this.aliveCount++;
             } else {
                 this.deadCount++;
@@ -146,7 +149,7 @@ class App extends React.Component {
         return (
             <div>
 				<div id="show">
-					{Object.keys(this.state).map((k, index) => <Cell key={k} alive={this.state[k]['alive']}/>) }
+					{Object.keys(this.state).map((k, index) => <Cell key={k} alive={this.state[k]}/>) }
 				</div>
 				<div className="detail">
 					<div>细胞数:{this.cellsCount}</div>
