@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import Perf from 'react-addons-perf' // ES6
+import {Layer, Rect, Stage, Group} from 'react-konva';
 class Cell extends React.Component {
     constructor(props) {
         super(props);
@@ -10,20 +10,24 @@ class Cell extends React.Component {
     }
 
     render() {
-        let className = ['cell'];
-        if (this.props.alive) {
-            className.push('alive');
-        }
+		let cellName=this.props.name;
+		let w=cellSize;
+		let h=cellSize;
+        let x =parseInt(cellName.split('_')[0])*w;
+		let y=parseInt(cellName.split('_')[1])*h;
+		
+		let color=(this.props.alive)?'red':'black';
 
         return (
-            <div className={className.join(' ')}></div>
+            <Rect x={x} y={y} width={w} height={h}
+                fill={color} />
         );
     }
 }
 
-let cellSize = 2;
-let w = 200;
-let h = 200;
+let cellSize = 4;
+let w = 500;
+let h = 500;
 let chance = 0.5;
 let stopTime = 5000;
 class App extends React.Component {
@@ -136,7 +140,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this.timer = setInterval(this.tick, 100);
+        this.timer = setInterval(this.tick, 500);
 
     }
 
@@ -148,9 +152,11 @@ class App extends React.Component {
 
         return (
             <div>
-				<div id="show">
-					{Object.keys(this.state).map((k, index) => <Cell key={k} alive={this.state[k]}/>) }
-				</div>
+				<Stage width={w} height={h}>
+					<Layer>
+					{Object.keys(this.state).map((k, index) => <Cell key={k} name={k} alive={this.state[k]}/>) }
+					</Layer>
+				</Stage>
 				<div className="detail">
 					<div>细胞数:{this.cellsCount}</div>
 				    <div>剩余进化次数:{(stopTime-this.runTime)}</div>
