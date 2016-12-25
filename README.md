@@ -1,6 +1,6 @@
-# react game of life
+# react-canvas game of life
 
-For test..
+drawing canvas by [React Konva](https://github.com/lavrton/react-konva)
 
-There are more than 10000+ div run on the page. also the state object store more that 10000+ properties 
+[demo](http://jy1989.github.io/demo/react-canvas-gol/)
 
