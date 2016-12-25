@@ -5,9 +5,10 @@ class Cell extends React.Component {
     constructor(props) {
         super(props);
     }
+	/*
     shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.alive !== this.props.alive;
-    }
+        //return nextProps.alive !== this.props.alive;
+    }*/
 
     render() {
 		let cellName=this.props.name;
@@ -16,18 +17,18 @@ class Cell extends React.Component {
         let x =parseInt(cellName.split('_')[0])*w;
 		let y=parseInt(cellName.split('_')[1])*h;
 		
-		let color=(this.props.alive)?'red':'black';
+		//let color=(this.props.alive)?'red':'black';
 
         return (
             <Rect x={x} y={y} width={w} height={h}
-                fill={color} />
+                fill={'black'} />
         );
     }
 }
 
 let cellSize = 4;
-let w = 500;
-let h = 500;
+let w = 400;
+let h = 400;
 let chance = 0.5;
 let stopTime = 5000;
 class App extends React.Component {
@@ -153,8 +154,14 @@ class App extends React.Component {
         return (
             <div>
 				<Stage width={w} height={h}>
-					<Layer>
-					{Object.keys(this.state).map((k, index) => <Cell key={k} name={k} alive={this.state[k]}/>) }
+					<Layer hitGraphEnabled={false}>
+					{
+						Object.keys(this.state).map((k, index) =>{ 
+							if(this.state[k]){
+								return <Cell key={k} name={k} />
+							}
+						}) 
+					}
 					</Layer>
 				</Stage>
 				<div className="detail">
